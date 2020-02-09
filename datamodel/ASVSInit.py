@@ -45,9 +45,10 @@ class ASVSInit:
 
 ![Section]({asvs_section})![ASVS]({asvs_item})![CWE]({cwe_id})![NIST]({nist_id})![Top 10]({owasp})
 
-| L1| L2| L3|
-| --|:--:|-:|
-| {l1} | {l2} | {l3} |
+| L1       |    L2    |       L3 |
+| -------- | :------: | -------: |
+| {l1:^8s} | {l2:^8s} | {l3:^8s} |
+
 
 ### Tested
 
