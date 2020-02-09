@@ -41,9 +41,10 @@ class ASVSInit:
 
 
         data = """### ASVS
+![Section]({asvs_section})![ASVS]({asvs_item})![CWE]({cwe_id})![NIST]({nist_id})![Top 10]({owasp})
+
 {asvs_description}
 
-![Section]({asvs_section})![ASVS]({asvs_item})![CWE]({cwe_id})![NIST]({nist_id})![Top 10]({owasp})
 
 | L1       |    L2    |       L3 |
 | -------- | :------: | -------: |
