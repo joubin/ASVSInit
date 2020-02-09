@@ -34,7 +34,7 @@ class ASVSInit:
             urllib.request.urlretrieve(url,
                                        filename=file_name)
         print(".", end="")
-        return file_name
+        return file_name.relative_to(image_dir.parent)
 
 
     def write_to_file(self, md_path: Path, file_name: str, image_path: Path):
