@@ -11,6 +11,17 @@ class CWE:
         self.description = description.strip()
         self.id = id.strip()
 
+    def get_latest_owasp_source_id(self) -> (str, str):
+        """
+
+        :return: (source,id) or ("","") if there is no OWASP mapping
+        """
+        latest = self.get_latest_owasp()
+        if latest is not None:
+            return latest.source, latest.id
+        else:
+            return '', ''
+
     def get_latest_owasp(self):
         """
 

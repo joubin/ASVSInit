@@ -1,25 +1,49 @@
+import urllib
 from pathlib import Path
 
 from datamodel.ASVS import ASVS
 from datamodel.CWE import CWE
-import urllib.parse
+import urllib.request
+from urllib.request import ProxyHandler, build_opener, install_opener
+from urllib.parse import quote as encode
 
 class ASVSInit:
+    proxy = ProxyHandler({})
+    opener = build_opener(proxy)
+    opener.addheaders = [('User-Agent','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.1 Safari/603.1.30')]
+    install_opener(opener)
+
     def __init__(self, asvs: ASVS, cwe: CWE):
         self.asvs = asvs
         self.cwe = cwe
 
-    def write_to_file(self, path: Path, file_name: str):
-        encode = urllib.parse.quote
-        latest_owasp_source, latest_owasp_id = (self.cwe.get_latest_owasp().source,
-                                                self.cwe.get_latest_owasp().id) if self.cwe.get_latest_owasp() is not \
-                                                                                   None else ("", "")
-        latest_owasp_source = encode(latest_owasp_source)
+    def get_shield(self, left: str, right: str, color: str, image_dir: Path):
+        right = right.replace("/", " ")
+        left = left.replace("/", " ")
+        def make_shiled_url():
+            return "https://img.shields.io/badge/{left}-{right}-{color}.svg".format(left=encode(left),
+                                                                                    right=encode(right),
+                                                                                    color=encode(color))
 
-        data = """### {asvs_item} 
+        file_name = image_dir.joinpath("{left}-{right}-{color}.svg".format(left=left,
+                                                                           right=right,
+                                                                           color=
+                                                                               color))
+        url = make_shiled_url()
+        if not file_name.exists():
+            urllib.request.urlretrieve(url,
+                                       filename=file_name)
+        print(".", end="")
+        return file_name
+
+
+    def write_to_file(self, md_path: Path, file_name: str, image_path: Path):
+
+
+        data = """### ASVS
 {asvs_description}
 
-![Section]({shield_url}{asvs_section}-green.svg)![ASVS]({shield_url}ASVS-{asvs_item}-blue.svg)![CWE]({shield_url}CWE-{cwe_id}-red.svg)![NIST]({shield_url}NIST-{nist_id}-important.svg)![Top 10]({shield_url}{owasp}-{owasp_id}-lightgray.svg)
+![Section]({asvs_section})![ASVS]({asvs_item})![CWE]({cwe_id})![NIST]({nist_id})![Top 10]({owasp})
 
 | L1| L2| L3|
 | --|:--:|-:|
@@ -31,8 +55,14 @@ class ASVSInit:
 
 ### Comments
 
-        """.format(asvs_description=self.asvs.description, asvs_item=self.asvs.item, asvs_section=self.asvs.section,
-                   shield_url="https://img.shields.io/badge/", cwe_id=self.cwe.id, nist_id=encode(self.asvs.nist),
-                   owasp=latest_owasp_source, owasp_id=latest_owasp_id, l1=self.asvs.l1, l2=self.asvs.l2, l3=self.asvs.l3)
-        with open(path.joinpath(file_name).as_posix(), 'w+') as file:
+        """.format(asvs_description=self.asvs.description,
+                   asvs_item=self.get_shield(left="ASVS", right=self.asvs.item, color="blue", image_dir=image_path),
+                   asvs_section=self.get_shield(left="", right=self.asvs.section, color="green", image_dir=image_path),
+                   cwe_id=self.get_shield(left="CWE", right=self.cwe.id, color="red", image_dir=image_path),
+                   nist_id=self.get_shield(left="NIST", right=self.asvs.nist, color="important", image_dir=image_path),
+                   owasp=self.get_shield(left=self.cwe.get_latest_owasp_source_id()[0], right=self.cwe.get_latest_owasp_source_id()[1], color="lightgrey", image_dir=image_path),
+                   l1=self.asvs.l1,
+                   l2=self.asvs.l2,
+                   l3=self.asvs.l3)
+        with open(md_path.joinpath(file_name).as_posix(), 'w+') as file:
             file.write(data)

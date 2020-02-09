@@ -29,8 +29,9 @@ class Stage(object):
         self.download_files(url="https://github.com/OWASP/ASVS/archive/v4.0.1.zip")
         self.download_files(url="https://cwe.mitre.org/data/xml/views/1026.xml.zip")
         self.init_dir = Stage.get_init_location()
-        if not self.init_dir.exists() : os.mkdir(self.init_dir)
-
+        if not self.init_dir.exists(): os.mkdir(self.init_dir)
+        self.image_path = self.init_dir.joinpath("images")
+        if not self.image_path.exists(): os.mkdir(self.image_path)
 
     @staticmethod
     def get_init_location():
@@ -105,7 +106,7 @@ class Stage(object):
                      l1=item["L1"], l2=item["L2"], l3=item["L3"], cwe=item["CWE"], nist=item["NIST"]))
         return results
 
-    def map_asvs_cwe(self, cwe_collection : Dict[str, CWE], asvs_list : List[ASVS]):
+    def map_asvs_cwe(self, cwe_collection: Dict[str, CWE], asvs_list: List[ASVS]):
         merged = []
         for asvs in asvs_list:
             if asvs.cwe is not None and asvs.cwe in cwe_collection.keys():
@@ -116,15 +117,11 @@ class Stage(object):
         return merged
 
     def write_to_file(self, x: List[ASVSInit]):
-        [item.write_to_file(self.init_dir, file_name=item.asvs.item+".md" ) for item in x]
+        [item.write_to_file(self.init_dir, file_name=item.asvs.item + ".md", image_path=self.image_path) for item in x]
 
     def delete_downloads(self):
         shutil.rmtree(self.downloads)
 
-    def __del__(self):
-        # todo uncomment the line below after testing
-        # self.delete_downloads()
-        pass
 
 if __name__ == '__main__':
     stage = Stage()
