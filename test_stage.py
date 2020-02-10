@@ -7,12 +7,6 @@ from Stage import Stage
 
 class TestStage(TestCase):
 
-
-
-
-
-
-
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -24,7 +18,7 @@ class TestStage(TestCase):
 
     def test_download_files(self):
         stage = Stage()
-        stage.download_files()
+        stage.download_files(url=)
         if not os.path.exists(stage.get_downloads_location()):
             self.fail()
 
