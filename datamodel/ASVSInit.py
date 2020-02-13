@@ -27,8 +27,8 @@ class ASVSInit:
 
         file_name = image_dir.joinpath("{left}-{right}-{color}.svg".format(left=left,
                                                                            right=right,
-                                                                           color=
-                                                                               color))
+                                                                           color=color).replace(" ", "_"))
+
         url = make_shiled_url()
         if not file_name.exists():
             urllib.request.urlretrieve(url,
