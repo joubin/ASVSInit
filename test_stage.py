@@ -18,7 +18,7 @@ class TestStage(TestCase):
 
     def test_download_files(self):
         stage = Stage()
-        stage.download_files(url=)
+        stage.download_zip_file(url=)
         if not os.path.exists(stage.get_downloads_location()):
             self.fail()
 
